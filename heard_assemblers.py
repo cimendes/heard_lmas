@@ -120,6 +120,7 @@ def merge_data_tables(report_dir):
 def merge_data_plots(report_dir):
     mainDataPlots = dict()
     DataPlots_files = glob(report_dir + '/*/' + 'pipeline_report_plots.json')
+    j = 0
     for dt_file in DataPlots_files:
         with open(dt_file) as dt_fh:
             dt_json = json.load(dt_fh)
@@ -127,6 +128,7 @@ def merge_data_plots(report_dir):
                 if k not in mainDataPlots.keys():
                     mainDataPlots[k] = v
                 else:
+                    j += 1
                     for plot_type in v['PlotData'].keys():
                         if plot_type == 'Global':
                             for item in v['PlotData']['Global']['contig_size']['data']:
@@ -162,12 +164,21 @@ def merge_data_plots(report_dir):
                                 mainDataPlots[k]['PlotData'][plot_type]['phred']['data'].append(item)
                             try:
                                 for item in v['PlotData'][plot_type]['gaps']['data']:
+                                    item['y'] = [j,j]
                                     mainDataPlots[k]['PlotData'][plot_type]['gaps']['data'].append(item)
+
                             except KeyError:
                                 pass
                             try:
                                 for item in v['PlotData'][plot_type]['snps']['data']:
+                                    item['y'] = [j,j]
                                     mainDataPlots[k]['PlotData'][plot_type]['snps']['data'].append(item)
+                            except KeyError:
+                                pass
+                            try:
+                                for item in v['PlotData'][plot_type]['misassembly']['data']:
+                                    item['y'] = [j,j]
+                                    mainDataPlots[k]['PlotData'][plot_type]['misassembly']['data'].append(item)
                             except KeyError:
                                 pass
     return mainDataPlots
